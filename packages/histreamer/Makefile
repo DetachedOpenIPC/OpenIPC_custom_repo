@@ -14,7 +14,7 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/OpenIPC/histreamer.git
 PKG_SOURCE_DATE:=2017-08-02
-PKG_SOURCE_VERSION:=e0eeef71114d63331abf9ba5cc1fc35848937c27
+PKG_SOURCE_VERSION:=ab13dc88a0c941456043670b7793f67f1ef2d8c2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
@@ -65,7 +65,9 @@ endef
 
 define Package/$(PKG_NAME)-$(BUILD_VARIANT)/install
 	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT) $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/*.so $(1)/usr/lib/
 endef
 
 $(foreach st,$(STREAMER_VERSIONS), \
