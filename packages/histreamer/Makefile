@@ -50,7 +50,7 @@ endef
 
 define BuildHiStreamerPackage
 	$(eval $($(PKG_NAME)/$(1)))
-	$(call Package/$(PKG_NAME)/template,$(1),+libopus)
+	$(call Package/$(PKG_NAME)/template,$(1),+libopus +himpp-dev)
 endef
 
 ifdef BUILD_VARIANT
