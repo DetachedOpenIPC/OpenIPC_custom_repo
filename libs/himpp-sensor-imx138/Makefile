@@ -76,10 +76,10 @@ DEPS_V2+=@(PACKAGE_himpp-dev-hi3516cv200||PACKAGE_himpp-dev-hi3518ev200||PACKAGE
 DEPS_V3:=@(TARGET_hi35xx_16cv300||TARGET_hi35xx_16ev100)
 DEPS_V3+=@(PACKAGE_himpp-dev-hi3516cv300||PACKAGE_himpp-dev-hi3516ev100)
 
-Package/$(PKG_NAME)-v1=$(call Package/$(PKG_NAME)-template,v1,$(DEPS_V1))
-Package/$(PKG_NAME)-v2=$(call Package/$(PKG_NAME)-template,v2,$(DEPS_V2))
-Package/$(PKG_NAME)-v3=$(call Package/$(PKG_NAME)-template,v3,$(DEPS_V3))
+# Package/$(PKG_NAME)-v1=$(call Package/$(PKG_NAME)-template,v1,$(DEPS_V1))
+# Package/$(PKG_NAME)-v2=$(call Package/$(PKG_NAME)-template,v2,$(DEPS_V2))
+# Package/$(PKG_NAME)-v3=$(call Package/$(PKG_NAME)-template,v3,$(DEPS_V3))
 
-$(eval $(call BuildPackage,$(PKG_NAME)-v1))
-$(eval $(call BuildPackage,$(PKG_NAME)-v2))
-$(eval $(call BuildPackage,$(PKG_NAME)-v3))
+# $(eval $(call BuildPackage,$(PKG_NAME)-v1))
+# $(eval $(call BuildPackage,$(PKG_NAME)-v2))
+# $(eval $(call BuildPackage,$(PKG_NAME)-v3))
