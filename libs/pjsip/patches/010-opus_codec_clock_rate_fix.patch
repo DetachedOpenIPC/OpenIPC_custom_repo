@@ -1,0 +1,15 @@
+Index: pjproject-2.9/pjmedia/src/pjmedia-codec/opus.c
+===================================================================
+--- pjproject-2.9.orig/pjmedia/src/pjmedia-codec/opus.c
++++ pjproject-2.9/pjmedia/src/pjmedia-codec/opus.c
+@@ -541,8 +541,8 @@ static pj_status_t factory_enum_codecs(
+          * number of channels MUST be 2.
+          */	
+ 	codecs[0].encoding_name = pj_str("opus");
+-	codecs[0].clock_rate    = 48000;
+-	codecs[0].channel_cnt   = 2;
++	codecs[0].clock_rate    = 8000;
++	codecs[0].channel_cnt   = 1;
+ 	*count = 1;
+     }
+ 
