@@ -1,116 +1,125 @@
 #
-# Copyright (C) 2010-2011 OpenWrt.org
+# Copyright (C) 2006-2018 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
 
+# 2018.06.09
+# В будущем сделать зависимость от платформы Hisilicon и конкретной версии ядра
+# Включить сборку из исходников himm, некоторых модулей ябра и библиотек сенсоров
+
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=himpp-dev
-PKG_VERSION:=1.0.B.0
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/OpenIPC/himpp-dev.git
-PKG_SOURCE_DATE:=2017-08-02
-PKG_SOURCE_VERSION:=0ea83eea801cb98392e6dd5f842553cc96a6ac4c
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+PKG_VERSION:=3.0.8
+PKG_RELEASE:=1.0.B.0
 
-# PKG_SOURCE:=hi3518v100-mpp2-$(PKG_SOURCE_VERSION).tgz
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+PKG_LICENSE:=MIT
+PKG_LICENSE_FILES:=HISILICON COPYING
 
-PKG_MAINTAINER:=Sergey Sharshunov <s.sharshunov@gmail.com>
-
-PKG_BUILD_PARALLEL:=1
-# PKG_INSTALL:=1
-
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
-
-include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
 
-HIMPP_VERSIONS:=16cv100
-HIMPP_VERSIONS+=16cv200
-HIMPP_VERSIONS+=16cv300
-HIMPP_VERSIONS+=16ev100
-HIMPP_VERSIONS+=18av100
-HIMPP_VERSIONS+=18cv100
-HIMPP_VERSIONS+=18ev100
-HIMPP_VERSIONS+=18ev200
-HIMPP_VERSIONS+=18ev201
-
-define Package/$(PKG_NAME)/template
-define Package/$(PKG_NAME)-hi35$(1)
-	SECTION:=OpenIPC_custom
+define Package/$(PKG_NAME)/default
+	SECTION:=openipc
 	CATEGORY:=OpenIPC
+	MAINTAINER:=Igor Zalatov <flyrouter@gmail.com>
+	TITLE:=Hisilicon OSDRV-1
 	SUBMENU:=HiSilicon related
-	URL:=https://openipc.org
-	MAINTAINER:=Sergey Sharshunov <s.sharshunov@gmail.com>
-	TITLE:=HiSilicon hi35$(1) himpp
-	VARIANT:=$(1)
-	DEPENDS:=@(TARGET_hi35xx_$(1)) $(2)
-endef
+	URL:=http://zftlab.org
+	DEPENDS:=@(TARGET_hi35xx_16cv100||TARGET_hi35xx_18av100||TARGET_hi35xx_18cv100||TARGET_hi35xx_18ev100) +libstdcpp
 endef
 
-define BuildHimppPackage
-	$(eval $($(PKG_NAME)/$(1)))
-	$(call Package/$(PKG_NAME)/template,$(1),)
+define Package/$(PKG_NAME)/Default/description
+	Hisilicon OSDRV kernel modules, drivers, libs and tools
 endef
 
-ifdef BUILD_VARIANT
-$(eval $(call $(PKG_NAME)/$(BUILD_VARIANT)))
+define Package/$(PKG_NAME)-base
+$(call Package/$(PKG_NAME)/default)
+	TITLE+= - base package
+endef
 
-ifeq (,$(filter $(BUILD_VARIANT),16cv100 18av100 18cv100 18ev100))
-	HIMPP_SDK_VERSION = 1.0.B.0
-	HIMPP_SDK_SOURCE = hi3518v100-mpp2-$(HIMPP_SDK_VERSION).tgz
-endif
-ifeq (,$(filter $(BUILD_VARIANT),16cv200 18ev200 18ev201))
-	HIMPP_SDK_VERSION = 1.0.4.1
-	HIMPP_SDK_SOURCE = hi3518v200-mpp2-$(HIMPP_SDK_VERSION).tgz
-endif
-ifeq (,$(filter $(BUILD_VARIANT),16cv300 16ev100))
-	HIMPP_SDK_VERSION = 1.0.B.0
-	HIMPP_SDK_SOURCE = hi3518v100-mpp2-$(HIMPP_SDK_VERSION).tgz
-endif
+define Package/$(PKG_NAME)-binary
+$(call Package/$(PKG_NAME)/default)
+	TITLE+= - binary package
+endef
 
-HIMPP_HI35XX_MAKE_OPTS = ARCH=arm
-HIMPP_HI35XX_MAKE_OPTS += HIARCH=hi3518
-HIMPP_HI35XX_MAKE_OPTS += LIBC=uclibc
-HIMPP_HI35XX_MAKE_OPTS += CROSS=$(TARGET_CROSS)
-HIMPP_HI35XX_MAKE_OPTS += CROSS_COMPILE=$(TARGET_CROSS)
-HIMPP_HI35XX_MAKE_OPTS += LINUX_ROOT=$(LINUX_DIR)
-HIMPP_HI35XX_MAKE_OPTS += SDK_PATH=$(PKG_BUILD_DIR)
-HIMPP_HI35XX_MAKE_OPTS += SENSOR_TYPE=$(SENSOR_TYPE)
-endif
+define Package/$(PKG_NAME)-kmod
+$(call Package/$(PKG_NAME)/default)
+	TITLE+= - kmod package
+endef
+
+define Package/$(PKG_NAME)-lib
+$(call Package/$(PKG_NAME)/default)
+	TITLE+= - lib package
+endef
+
+define Package/$(PKG_NAME)-sensor
+$(call Package/$(PKG_NAME)/default)
+	TITLE+= - sensor package
+endef
+
+define Package/$(PKG_NAME)-tool
+$(call Package/$(PKG_NAME)/default)
+	TITLE+= - tool package
+	DEPENDS:=+$(PKG_NAME)-base +$(PKG_NAME)-kmod +$(PKG_NAME)-lib +$(PKG_NAME)-sensor +libpthread
+endef
 
 define Build/Prepare
-	$(call Build/Prepare/Default)
-	$(TAR) -zxf $(PKG_BUILD_DIR)/$(HIMPP_SDK_SOURCE) \
-		--strip-components=1 -C $(PKG_BUILD_DIR)
-	find $(PKG_BUILD_DIR) -name .svn | $(XARGS) rm -rf
+endef
+
+define Build/Configure
 endef
 
 define Build/Compile
-	$(MAKE) all -C $(PKG_BUILD_DIR)/mpp2/extdrv $(HIMPP_HI35XX_MAKE_OPTS) LDFLAGS="$(TARGET_LDFLAGS)" \
-	CFLAGS="$(EXTRA_CFLAGS) $(TARGET_CPPFLAGS) $(EXTRA_CPPFLAGS)"
 endef
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(STAGING_DIR)/usr/include
-	$(CP) -r $(PKG_BUILD_DIR)/mpp2/include/* $(STAGING_DIR)/usr/include/
+	$(INSTALL_DIR) $(STAGING_DIR)/usr/include/$(PKG_NAME)
+	$(CP) ./include/* $(STAGING_DIR)/usr/include/$(PKG_NAME)/
 	$(INSTALL_DIR) $(STAGING_DIR)/usr/lib
-	$(CP) -r $(PKG_BUILD_DIR)/mpp2/lib/*.* $(STAGING_DIR)/usr/lib/
+	$(CP) ./lib/*.so $(STAGING_DIR)/usr/lib/
 endef
 
-define Package/$(PKG_NAME)-hi35$(BUILD_VARIANT)/install
+define Package/$(PKG_NAME)-base/install
+	$(INSTALL_DIR) $(1)/etc/init.d
+	#$(INSTALL_BIN) ./script/ipcam.init $(1)/etc/init.d/ipcam
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) ./script/* $(1)/usr/bin/
+endef
+
+define Package/$(PKG_NAME)-binary/install
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(CP) ./binary/* $(1)/usr/bin/
+endef
+
+define Package/$(PKG_NAME)-kmod/install
+	$(INSTALL_DIR) $(1)/lib/modules/$(PKG_VERSION)
+	$(CP) ./kmod/*.ko $(1)/lib/modules/$(PKG_VERSION)
+	$(CP) ./kmod/extdrv/*.ko $(1)/lib/modules/$(PKG_VERSION)
+endef
+
+define Package/$(PKG_NAME)-lib/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_DIR) $(1)/usr/lib/ko
-	$(INSTALL_DIR) $(1)/usr/lib/ko/extdrv
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/mpp2/ko/extdrv/*.ko $(1)/usr/lib/ko/extdrv
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/mpp2/ko/*.ko $(1)/usr/lib/ko
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/mpp2/lib/*.so $(1)/usr/lib/
+	$(CP) ./lib/lib*.so $(1)/usr/lib/
 endef
 
-# $(foreach hv,$(HIMPP_VERSIONS), \
-# 	$(eval $(call BuildHimppPackage,$(hv))) \
-# 	$(eval $(call BuildPackage,$(PKG_NAME)-hi35$(hv))) \
-# )
+define Package/$(PKG_NAME)-sensor/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) ./sensor/libsns_*.so $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/etc/sensors
+	$(CP) ./sensor/config/* $(1)/etc/sensors
+endef
+
+define Package/$(PKG_NAME)-tool/install
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-tool/himm $(1)/usr/bin/
+endef
+
+$(eval $(call BuildPackage,$(PKG_NAME)-base))
+$(eval $(call BuildPackage,$(PKG_NAME)-binary))
+$(eval $(call BuildPackage,$(PKG_NAME)-kmod))
+$(eval $(call BuildPackage,$(PKG_NAME)-lib))
+$(eval $(call BuildPackage,$(PKG_NAME)-sensor))
+#$(eval $(call BuildPackage,$(PKG_NAME)-tool))

@@ -12,9 +12,9 @@ PKG_VERSION:=0.1
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/OpenIPC/histreamer.git
+PKG_SOURCE_URL:=https://github.com/SSharshunov/histreamer.git
 PKG_SOURCE_DATE:=2017-08-02
-PKG_SOURCE_VERSION:=ab13dc88a0c941456043670b7793f67f1ef2d8c2
+PKG_SOURCE_VERSION:=8e17839c5df0dc51b24d20ae119af8161741c154
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
@@ -50,7 +50,7 @@ endef
 
 define BuildHiStreamerPackage
 	$(eval $($(PKG_NAME)/$(1)))
-	$(call Package/$(PKG_NAME)/template,$(1),+libopus)
+	$(call Package/$(PKG_NAME)/template,$(1),+libopus +himpp-dev-lib)
 endef
 
 ifdef BUILD_VARIANT
