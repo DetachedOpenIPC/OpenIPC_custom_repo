@@ -50,7 +50,7 @@ endef
 
 define BuildHiStreamerPackage
 	$(eval $($(PKG_NAME)/$(1)))
-	$(call Package/$(PKG_NAME)/template,$(1),+libopus +himpp-dev)
+	$(call Package/$(PKG_NAME)/template,$(1),+libopus)
 endef
 
 ifdef BUILD_VARIANT
@@ -67,7 +67,6 @@ define Package/$(PKG_NAME)-$(BUILD_VARIANT)/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT) $(1)/usr/bin/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/*.so $(1)/usr/lib/
 endef
 
 $(foreach st,$(STREAMER_VERSIONS), \

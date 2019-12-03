@@ -110,7 +110,7 @@ define Package/$(PKG_NAME)-hi35$(BUILD_VARIANT)/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/mpp2/lib/*.so $(1)/usr/lib/
 endef
 
-$(foreach hv,$(HIMPP_VERSIONS), \
-	$(eval $(call BuildHimppPackage,$(hv))) \
-	$(eval $(call BuildPackage,$(PKG_NAME)-hi35$(hv))) \
-)
+# $(foreach hv,$(HIMPP_VERSIONS), \
+# 	$(eval $(call BuildHimppPackage,$(hv))) \
+# 	$(eval $(call BuildPackage,$(PKG_NAME)-hi35$(hv))) \
+# )
