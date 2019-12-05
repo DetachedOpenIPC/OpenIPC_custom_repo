@@ -71,7 +71,6 @@ CONFIGURE_ARGS += \
 	--disable-ipp \
 	--disable-ssl \
 	--disable-oss \
-    --disable-libyuv \
     --enable-shared \
 	--enable-sound \
 	--disable-resample \
