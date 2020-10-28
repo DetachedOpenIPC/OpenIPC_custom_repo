@@ -35,18 +35,13 @@ define Package/vtun/conffiles
 /etc/vtund.conf
 endef
 
-define Build/Configure
-    $(call Build/Configure/Default, \
+CONFIGURE_ARGS += \
 	--with-lzo-headers="$(STAGING_DIR)/usr/include/lzo" \
 	--with-lzo-lib="$(STAGING_DIR)/usr/lib/" \
-	--with-ssl-headers="$(STAGING_DIR)/usr/include/openssl" \
-	, \
-	LIBS="$(TARGET_LDFLAGS)" \
-	BLOWFISH_HDR_DIR="$(STAGING_DIR)/usr/include/openssl" \
-	LZO_HDR_DIR="$(STAGING_DIR)/usr/include/lzo" \
-	SSL_HDR_DIR="$(STAGING_DIR)/usr/include/openssl" \
-    )
-endef
+	--with-ssl-headers="$(STAGING_DIR)/usr/include/openssl"
+
+CONFIGURE_VARS += \
+	LIBS="$(TARGET_LDFLAGS)"
 
 define Build/Compile
 	$(call Build/Compile/Default,vtund)
