@@ -8,14 +8,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=vtun
-PKG_VERSION:=3.0.4
+PKG_VERSION:=3.0.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@SF/vtun
-PKG_MD5SUM:=f952c5895ae8f40235aaad9a8f41a4bd
+#PKG_MD5SUM:=f952c5895ae8f40235aaad9a8f41a4bd
 
 PKG_MAINTAINER:=Sergey Sharshunov <s.sharshunov@gmail.com>
+
+#PKG_BUILD_DEPENDS:=liblzo
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -31,6 +33,19 @@ endef
 
 define Package/vtun/conffiles
 /etc/vtund.conf
+endef
+
+define Build/Configure
+    $(call Build/Configure/Default, \
+	--with-lzo-headers="$(STAGING_DIR)/usr/include/lzo" \
+	--with-lzo-lib="$(STAGING_DIR)/usr/lib/" \
+	--with-ssl-headers="$(STAGING_DIR)/usr/include/openssl" \
+	, \
+	LIBS="$(TARGET_LDFLAGS)" \
+	BLOWFISH_HDR_DIR="$(STAGING_DIR)/usr/include/openssl" \
+	LZO_HDR_DIR="$(STAGING_DIR)/usr/include/lzo" \
+	SSL_HDR_DIR="$(STAGING_DIR)/usr/include/openssl" \
+    )
 endef
 
 define Build/Compile
